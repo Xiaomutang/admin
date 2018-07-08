@@ -6,7 +6,9 @@ import router from './router';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import '@/assets/login.css';
+import MyAxios from '@/plugins/myaxios';
 Vue.config.productionTip = false;
+Vue.use(MyAxios);
 Vue.use(ElementUI);
 /* eslint-disable no-new */
 new Vue({
