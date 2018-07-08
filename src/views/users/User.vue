@@ -14,6 +14,7 @@
       </el-col>
     </el-row>
     <el-table
+      v-loading="loading"
       :data="list"
       stripe
       border
@@ -68,7 +69,8 @@
 export default {
   data() {
     return {
-      list: []
+      list: [],
+      loading: true
     };
   },
   created() {
@@ -76,9 +78,12 @@ export default {
   },
   methods: {
     async loadData() {
+      this.loading = true;
       const token = sessionStorage.getItem('token');
+      // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
       this.$http.defaults.headers.common['Authorization'] = token;
       const res = await this.$http.get('users?pagenum=1&pagesize=10');
+      this.loading = false;
       const data = res.data;
       const { meta: { status, msg } } = data;
       if (status === 200) {
