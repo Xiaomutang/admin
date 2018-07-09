@@ -62,6 +62,15 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="currentPage"
+      :page-sizes="[1, 2]"
+      :page-size="pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total">
+    </el-pagination>
   </el-card>
 </template>
 
@@ -70,7 +79,10 @@ export default {
   data() {
     return {
       list: [],
-      loading: true
+      loading: true,
+      pagesize: 2,
+      currentPage: 1,
+      total: 0
     };
   },
   created() {
@@ -82,16 +94,27 @@ export default {
       const token = sessionStorage.getItem('token');
       // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
       this.$http.defaults.headers.common['Authorization'] = token;
-      const res = await this.$http.get('users?pagenum=1&pagesize=10');
+      const params = { pagenum: this.currentPage, pagesize: this.pagesize };
+      const res = await this.$http.get('users', { params });
       this.loading = false;
       const data = res.data;
       const { meta: { status, msg } } = data;
       if (status === 200) {
         const { data: { users } } = data;
         this.list = users;
+        this.total = res.data.data.total;
       } else {
         this.$message.error(msg);
       }
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.loadData();
+    },
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.currentPage = 1;
+      this.loadData();
     }
   }
 };
