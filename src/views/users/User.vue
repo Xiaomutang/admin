@@ -72,7 +72,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
-    <el-dialog title="添加用户" :visible.sync="addUserFormVisible">
+    <el-dialog @closed="handleClosed" title="添加用户" :visible.sync="addUserFormVisible">
       <el-form label-position="right" label-width="120px" :model="form">
         <el-form-item label="用户名">
             <el-input v-model="form.username"  auto-complete="off"></el-input>
@@ -156,6 +156,11 @@ export default {
         this.loadData();
       } else {
         this.$message.error(msg);
+      }
+    },
+    handleClosed() {
+      for (let key in this.form) {
+        this.form[key] = '';
       }
     },
     handleSearch() {
