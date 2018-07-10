@@ -176,9 +176,9 @@ export default {
   methods: {
     async loadData() {
       this.loading = true;
-      const token = sessionStorage.getItem('token');
+      // const token = sessionStorage.getItem('token');
       // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-      this.$http.defaults.headers.common['Authorization'] = token;
+      // this.$http.defaults.headers.common['Authorization'] = token;
       const params = { pagenum: this.currentPage, pagesize: this.pagesize, query: this.searchValue };
       const res = await this.$http.get('users', { params });
       this.loading = false;
