@@ -10,7 +10,8 @@
       border
       stripe
       :data="list"
-      style="width: 100%">
+      style="width: 100%"
+      height="478">
       <el-table-column
       type="index"
       width="50">
@@ -28,6 +29,11 @@
       <el-table-column
         prop="level"
         label="层级">
+        <template slot-scope="scope">
+          <span v-if="scope.row.level === '0'">一级</span>
+          <span v-else-if="scope.row.level === '1'">二级</span>
+          <span v-else-if="scope.row.level === '2'">三级</span>
+        </template>
       </el-table-column>
     </el-table>
   </el-card>
@@ -63,7 +69,8 @@ export default {
 
 <style>
   .box-card {
-    height: 100%;
+    height: 99%;
+    /* overflow: auto; */
   }
 
   .tb {
