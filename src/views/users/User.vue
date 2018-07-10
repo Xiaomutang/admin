@@ -241,8 +241,17 @@ export default {
       this.form.mobile = user.mobile;
       this.form.id = user.id;
     },
-    handleEdit() {
-      console.log(1);
+    async handleEdit() {
+      const res = await this.$http.put(`users/${this.form.id}`, this.form);
+      const data = res.data;
+      const { meta: { status, msg } } = data;
+      if (status === 200) {
+        this.editUserFormVisible = false;
+        this.$message.success(msg);
+        this.loadData();
+      } else {
+        this.$message.error(msg);
+      }
     }
   }
 };
