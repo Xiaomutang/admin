@@ -298,8 +298,19 @@ export default {
       console.log(res1);
       this.currentRoleId = res1.data.data.rid;
     },
-    handleRole() {
-      console.log(1);
+    async handleRole() {
+      const res = await this.$http.put(`users/${this.currentUserId}/role`, {
+        rid: this.currentRoleId
+      });
+      const data = res.data;
+      const { meta: { status, msg } } = data;
+      if (status === 200) {
+        this.$message.success(msg);
+        this.RoleUserFormVisible = false;
+        this.loadData();
+      } else {
+        this.$message.error(msg);
+      }
     }
   }
 };
