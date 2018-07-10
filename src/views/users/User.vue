@@ -59,7 +59,7 @@
         <template slot-scope="scope">
           <el-button @click="editShow(scope.row)" plain size="mini" type="primary" icon="el-icon-edit" ></el-button>
           <el-button @click="handleDelete(scope.row.id)" plain size="mini" type="danger" icon="el-icon-delete" ></el-button>
-          <el-button plain size="mini" type="success" icon="el-icon-check" ></el-button>
+          <el-button @click="showRoleUserFormVisible(scope.row)" size="mini" type="success" icon="el-icon-check" ></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -109,6 +109,29 @@
         <el-button type="primary" @click="handleEdit">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog @closed="handleClosed" title="分配角色" :visible.sync="RoleUserFormVisible">
+      <el-form label-position="right" label-width="120px" :model="form" :rules="rules" ref="form">
+        <el-form-item label="用户名" prop="username">
+          {{ currentUserName }}
+        </el-form-item>
+        <el-form-item label="角色">
+          <el-select v-model="currentRoleId">
+            <el-option disabled label="请选择" :value="-1">
+            </el-option>
+            <el-option
+              v-for="item in roles"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="RoleUserFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleRole">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -139,7 +162,12 @@ export default {
           { min: 3, max: 6, message: '长度在 3 到 6 个字符', trigger: 'blur' }
         ]
       },
-      editUserFormVisible: false
+      editUserFormVisible: false,
+      RoleUserFormVisible: false,
+      currentUserName: '',
+      currentUserId: -1,
+      currentRoleId: -1,
+      roles: []
     };
   },
   created() {
@@ -252,6 +280,26 @@ export default {
       } else {
         this.$message.error(msg);
       }
+    },
+    async showRoleUserFormVisible(user) {
+      console.log(user);
+      this.currentUserName = user.username;
+      this.currentUserId = user.id;
+      this.RoleUserFormVisible = true;
+      const res = await this.$http.get('roles');
+      const data = res.data;
+      const { meta: { status, msg } } = data;
+      if (status === 200) {
+        this.roles = res.data.data;
+      } else {
+        this.$message.error(msg);
+      }
+      const res1 = await this.$http.get(`users/${user.id}`);
+      console.log(res1);
+      this.currentRoleId = res1.data.data.rid;
+    },
+    handleRole() {
+      console.log(1);
     }
   }
 };
