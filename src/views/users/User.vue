@@ -73,18 +73,18 @@
       :total="total">
     </el-pagination>
     <el-dialog @closed="handleClosed" title="添加用户" :visible.sync="addUserFormVisible">
-      <el-form label-position="right" label-width="120px" :model="form">
-        <el-form-item label="用户名">
+      <el-form label-position="right" label-width="120px" :model="form" :rules="rules" ref="form">
+        <el-form-item label="用户名" prop="username">
             <el-input v-model="form.username"  auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码">
+        <el-form-item label="密码" prop="password">
             <el-input v-model="form.password" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="邮箱">
-            <el-input v-model="form.email" ></el-input>
+            <el-input v-model="form.email"></el-input>
         </el-form-item>
         <el-form-item label="电话">
-            <el-input v-model="form.mobile" ></el-input>
+            <el-input v-model="form.mobile"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -111,7 +111,17 @@ export default {
         email: '',
         mobile: ''
       },
-      addUserFormVisible: false
+      addUserFormVisible: false,
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 3, max: 6, message: '长度在 3 到 6 个字符', trigger: 'blur' }
+        ]
+      }
     };
   },
   created() {
@@ -146,17 +156,22 @@ export default {
       this.loadData();
     },
     async handleAdd() {
-      const res = await this.$http.post('users', this.form);
-      console.log(res);
-      const data = res.data;
-      const { meta: { status, msg } } = data;
-      if (status === 201) {
-        this.$message.success(msg);
-        this.addUserFormVisible = false;
-        this.loadData();
-      } else {
-        this.$message.error(msg);
-      }
+      this.$refs.form.validate(async (valid) => {
+        if (!valid) {
+          return this.$message.error('请完整输入内容');
+        }
+        const res = await this.$http.post('users', this.form);
+        console.log(res);
+        const data = res.data;
+        const { meta: { status, msg } } = data;
+        if (status === 201) {
+          this.$message.success(msg);
+          this.addUserFormVisible = false;
+          this.loadData();
+        } else {
+          this.$message.error(msg);
+        }
+      });
     },
     handleClosed() {
       for (let key in this.form) {
