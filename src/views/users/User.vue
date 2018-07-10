@@ -57,7 +57,7 @@
       <el-table-column
         label="操作">
         <template slot-scope="scope">
-          <el-button plain size="mini" type="primary" icon="el-icon-edit" ></el-button>
+          <el-button @click="editShow(scope.row)" plain size="mini" type="primary" icon="el-icon-edit" ></el-button>
           <el-button @click="handleDelete(scope.row.id)" plain size="mini" type="danger" icon="el-icon-delete" ></el-button>
           <el-button plain size="mini" type="success" icon="el-icon-check" ></el-button>
         </template>
@@ -92,6 +92,23 @@
         <el-button type="primary" @click="handleAdd">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog @closed="handleClosed" title="编辑用户" :visible.sync="editUserFormVisible">
+      <el-form label-position="right" label-width="120px" :model="form" :rules="rules" ref="form">
+        <el-form-item label="用户名" prop="username">
+            <el-input v-model="form.username"  auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+            <el-input v-model="form.email"></el-input>
+        </el-form-item>
+        <el-form-item label="电话">
+            <el-input v-model="form.mobile"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editUserFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleEdit">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -121,7 +138,8 @@ export default {
           { required: true, message: '请输入密码', trigger: 'blur' },
           { min: 3, max: 6, message: '长度在 3 到 6 个字符', trigger: 'blur' }
         ]
-      }
+      },
+      editUserFormVisible: false
     };
   },
   created() {
@@ -215,6 +233,16 @@ export default {
           message: '已取消删除'
         });
       });
+    },
+    editShow(user) {
+      this.editUserFormVisible = true;
+      this.form.username = user.username;
+      this.form.email = user.email;
+      this.form.mobile = user.mobile;
+      this.form.id = user.id;
+    },
+    handleEdit() {
+      console.log(1);
     }
   }
 };
