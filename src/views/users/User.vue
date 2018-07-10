@@ -10,7 +10,7 @@
         <el-input v-model="searchValue" class="searchInput" clearable placeholder="请输入内容">
           <el-button @click="handleSearch" slot="append" icon="el-icon-search"></el-button>
         </el-input>
-        <el-button type="success" plain @click="handleAdd">添加用户</el-button>
+        <el-button type="success" plain @click="addUserFormVisible=true">添加用户</el-button>
       </el-col>
     </el-row>
     <el-table
@@ -72,6 +72,26 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
+    <el-dialog title="添加用户" :visible.sync="addUserFormVisible">
+      <el-form label-position="right" label-width="120px" :model="form">
+        <el-form-item label="用户名">
+            <el-input v-model="form.username"  auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码">
+            <el-input v-model="form.password" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱">
+            <el-input v-model="form.email" ></el-input>
+        </el-form-item>
+        <el-form-item label="电话">
+            <el-input v-model="form.mobile" ></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addUserFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleAdd">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -84,7 +104,14 @@ export default {
       pagesize: 2,
       currentPage: 1,
       total: 0,
-      searchValue: ''
+      searchValue: '',
+      form: {
+        username: '',
+        password: '',
+        email: '',
+        mobile: ''
+      },
+      addUserFormVisible: false
     };
   },
   created() {
@@ -118,8 +145,18 @@ export default {
       this.currentPage = 1;
       this.loadData();
     },
-    handleAdd() {
-      this.$router.push({ name: 'usersAdd' });
+    async handleAdd() {
+      const res = await this.$http.post('users', this.form);
+      console.log(res);
+      const data = res.data;
+      const { meta: { status, msg } } = data;
+      if (status === 201) {
+        this.$message.success(msg);
+        this.addUserFormVisible = false;
+        this.loadData();
+      } else {
+        this.$message.error(msg);
+      }
     },
     handleSearch() {
       this.loadData();
