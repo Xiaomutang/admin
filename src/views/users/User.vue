@@ -7,10 +7,10 @@
     </el-breadcrumb>
     <el-row class="searchArea">
       <el-col :span="24">
-        <el-input class="searchInput" clearable placeholder="请输入内容">
-          <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-input v-model="searchValue" class="searchInput" clearable placeholder="请输入内容">
+          <el-button @click="handleSearch" slot="append" icon="el-icon-search"></el-button>
         </el-input>
-        <el-button type="success" plain>添加用户</el-button>
+        <el-button type="success" plain @click="handleAdd">添加用户</el-button>
       </el-col>
     </el-row>
     <el-table
@@ -47,6 +47,7 @@
         label="用户状态" width="100">
         <template slot-scope="scope">
           <el-switch
+            @change="handleSwitch(scope.row)"
             v-model="scope.row.mg_state"
             active-color="#13ce66"
             inactive-color="#ff4949">
@@ -57,7 +58,7 @@
         label="操作">
         <template slot-scope="scope">
           <el-button plain size="mini" type="primary" icon="el-icon-edit" ></el-button>
-          <el-button plain size="mini" type="danger" icon="el-icon-delete" ></el-button>
+          <el-button @click="handleDelete(scope.row.id)" plain size="mini" type="danger" icon="el-icon-delete" ></el-button>
           <el-button plain size="mini" type="success" icon="el-icon-check" ></el-button>
         </template>
       </el-table-column>
@@ -82,7 +83,8 @@ export default {
       loading: true,
       pagesize: 2,
       currentPage: 1,
-      total: 0
+      total: 0,
+      searchValue: ''
     };
   },
   created() {
@@ -94,7 +96,7 @@ export default {
       const token = sessionStorage.getItem('token');
       // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
       this.$http.defaults.headers.common['Authorization'] = token;
-      const params = { pagenum: this.currentPage, pagesize: this.pagesize };
+      const params = { pagenum: this.currentPage, pagesize: this.pagesize, query: this.searchValue };
       const res = await this.$http.get('users', { params });
       this.loading = false;
       const data = res.data;
@@ -115,6 +117,47 @@ export default {
       this.pagesize = val;
       this.currentPage = 1;
       this.loadData();
+    },
+    handleAdd() {
+      this.$router.push({ name: 'usersAdd' });
+    },
+    handleSearch() {
+      this.loadData();
+    },
+    async handleSwitch(user) {
+      const res = await this.$http.put(`users/${user.id}/state/${user.mg_state}`);
+      const data = res.data;
+      const { meta: { status, msg } } = data;
+      if (status === 200) {
+        this.$message.success(msg);
+        this.loadData();
+      } else {
+        this.$message.error(msg);
+      }
+    },
+    async handleDelete(id) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        const res = await this.$http.delete(`users/${id}`);
+        const data = res.data;
+        const { meta: { status } } = data;
+        if (status === 200) {
+          this.currentPage = 1;
+          this.loadData();
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     }
   }
 };
