@@ -22,19 +22,20 @@
             v-for="item1 in scope.row.children"
             :key="item1.id">
             <el-col :span="4">
-              <el-tag closable>{{ item1.authName }}</el-tag>
+              <el-tag @close="handleClose(scope.row, item1)" closable>{{ item1.authName }}</el-tag>
             </el-col>
             <el-col :span="20">
               <el-row
                 v-for="item2 in item1.children"
                 :key="item2.id">
                 <el-col :span="4">
-                  <el-tag closable>{{ item2.authName }}</el-tag>
+                  <el-tag @close="handleClose(scope.row, item2)" closable>{{ item2.authName }}</el-tag>
                   <i class="el-icon-arrow-right"></i>
                 </el-col>
                 <el-col :span="20">
                   <el-tag
                     closable
+                    @close="handleClose(scope.row, item3)"
                     class="level3"
                     type="warning"
                     v-for="item3 in item2.children"
@@ -99,8 +100,15 @@ export default {
         this.$message.error(msg);
       }
     },
-    handleClose() {
-
+    async handleClose(role, rightId) {
+      const res = await this.$http.delete(`roles/${role.id}/rights/${rightId.id}`);
+      const { data, meta: { status, msg } } = res.data;
+      if (status === 200) {
+        this.$message.success(msg);
+        role.children = data;
+      } else {
+        this.$message.error(msg);
+      }
     }
   }
 };
