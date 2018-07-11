@@ -147,11 +147,25 @@ export default {
       const { data } = resData;
       this.treeData = data;
     },
-    handleShowRightsDialog() {
+    handleShowRightsDialog(role) {
       this.dialogVisible = true;
+      this.currentRoleId = role.id;
+      const arr = [];
+      role.children.forEach((item1) => {
+        // arr.push(item1.id);
+        // 遍历二级权限
+        item1.children.forEach((item2) => {
+          // arr.push(item2.id);
+          // 遍历三级权限
+          item2.children.forEach((item3) => {
+            arr.push(item3.id);
+          });
+        });
+      });
+      this.checkedList = arr;
     },
     handleSetRights() {
-
+      
     }
   }
 };
