@@ -10,6 +10,11 @@
       v-loading="loading"
       :data="list"
       style="width: 100%">
+      <el-table-column type="expand">
+        <template slot-scope="scope">
+          15665
+        </template>
+      </el-table-column>
       <el-table-column
         type="index"
         width="50">
