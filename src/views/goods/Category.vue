@@ -20,10 +20,18 @@
         prop="name"
         label="级别"
         width="180">
+        <template slot-scope="scope">
+          <span v-if="scope.row.cat_level === 0">一级</span>
+          <span v-else-if="scope.row.cat_level === 1">二级</span>
+          <span v-else-if="scope.row.cat_level === 2">三级</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="address"
         label="是否有效">
+        <template slot-scope="scope">
+          {{ scope.row.cat_deleted ? '无效' : '有效' }}
+        </template>
       </el-table-column>
       <el-table-column
         label="操作">
