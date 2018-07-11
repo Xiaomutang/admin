@@ -75,9 +75,10 @@
       </el-table-column>
     </el-table>
     <el-dialog
+        @open="handleOpenDialog"
         title="分配权限"
         :visible.sync="dialogVisible">
-        <!-- <el-tree
+        <el-tree
           ref="tree"
           v-loading="loadingTree"
           :data="treeData"
@@ -86,7 +87,7 @@
           :default-checked-keys="checkedList"
           show-checkbox
           default-expand-all>
-        </el-tree> -->
+        </el-tree>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="handleSetRights">确 定</el-button>
@@ -138,6 +139,13 @@ export default {
       } else {
         this.$message.error(msg);
       }
+    },
+    async handleOpenDialog() {
+      this.loadingTree = true;
+      const { data: resData } = await this.$http.get('rights/tree');
+      this.loadingTree = false;
+      const { data } = resData;
+      this.treeData = data;
     },
     handleShowRightsDialog() {
       this.dialogVisible = true;
