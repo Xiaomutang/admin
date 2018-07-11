@@ -23,6 +23,15 @@
             <el-col :span="4">
               <el-tag>{{ item1.authName }}</el-tag>
             </el-col>
+            <el-col :span="20">
+              <el-row
+                v-for="item2 in item1.children"
+                :key="item2.id">
+                <el-col :span="4">
+                  <el-tag>{{ item2.authName }}</el-tag>
+                </el-col>
+              </el-row>
+            </el-col>
           </el-row>
         </template>
       </el-table-column>
