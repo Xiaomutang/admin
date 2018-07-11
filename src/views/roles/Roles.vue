@@ -12,7 +12,18 @@
       style="width: 100%">
       <el-table-column type="expand">
         <template slot-scope="scope">
-          15665
+          <!-- 15665
+          <el-tag
+            @close="handleClose" type="success" closable>
+
+          </el-tag> -->
+          <el-row
+            v-for="item1 in scope.row.children"
+            :key="item1.id">
+            <el-col :span="4">
+              <el-tag>{{ item1.authName }}</el-tag>
+            </el-col>
+          </el-row>
         </template>
       </el-table-column>
       <el-table-column
@@ -63,6 +74,9 @@ export default {
       } else {
         this.$message.error(msg);
       }
+    },
+    handleClose() {
+
     }
   }
 };
