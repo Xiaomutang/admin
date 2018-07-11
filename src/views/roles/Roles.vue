@@ -164,8 +164,23 @@ export default {
       });
       this.checkedList = arr;
     },
-    handleSetRights() {
-      
+    async handleSetRights() {
+      // 获取到被选中的节点的id
+      const checkedKeys = this.$refs.tree.getCheckedKeys();
+      // 获取到半选的节点的id
+      const halfCheckedKeys = this.$refs.tree.getHalfCheckedKeys();
+      const newArray = [...checkedKeys, ...halfCheckedKeys];
+      const { data: resData } = await this.$http.post(`roles/${this.currentRoleId}/rights`, {
+        rids: newArray.join(',')
+      });
+      const { meta: { status, msg } } = resData;
+      if (status === 200) {
+        this.$message.success(msg);
+        this.dialogVisible = false;
+        this.loadData();
+      } else {
+        this.$message.error(msg);
+      }
     }
   }
 };
