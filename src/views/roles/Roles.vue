@@ -74,6 +74,24 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog
+        title="分配权限"
+        :visible.sync="dialogVisible">
+        <!-- <el-tree
+          ref="tree"
+          v-loading="loadingTree"
+          :data="treeData"
+          :props="defaultProps"
+          node-key="id"
+          :default-checked-keys="checkedList"
+          show-checkbox
+          default-expand-all>
+        </el-tree> -->
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleSetRights">确 定</el-button>
+        </span>
+      </el-dialog>
   </el-card>
 </template>
 
@@ -82,7 +100,18 @@ export default {
   data() {
     return {
       list: [],
-      loading: true
+      loading: true,
+      loadingTree: true,
+      dialogVisible: false,
+      treeData: [],
+      defaultProps: {
+        children: 'children',
+        label: 'authName'
+      },
+      // 获取要选择的节点的id
+      checkedList: [],
+      // 记录当前修改的角色id
+      currentRoleId: -1
     };
   },
   created() {
@@ -109,6 +138,12 @@ export default {
       } else {
         this.$message.error(msg);
       }
+    },
+    handleShowRightsDialog() {
+      this.dialogVisible = true;
+    },
+    handleSetRights() {
+
     }
   }
 };
