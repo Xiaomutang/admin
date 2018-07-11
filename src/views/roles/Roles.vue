@@ -18,6 +18,7 @@
 
           </el-tag> -->
           <el-row
+            class="level1"
             v-for="item1 in scope.row.children"
             :key="item1.id">
             <el-col :span="4">
@@ -29,6 +30,16 @@
                 :key="item2.id">
                 <el-col :span="4">
                   <el-tag>{{ item2.authName }}</el-tag>
+                  <i class="el-icon-arrow-right"></i>
+                </el-col>
+                <el-col :span="20">
+                  <el-tag
+                    class="level3"
+                    type="warning"
+                    v-for="item3 in item2.children"
+                    :key="item3.id">
+                    {{ item3.authName }}
+                  </el-tag>
                 </el-col>
               </el-row>
             </el-col>
@@ -98,5 +109,12 @@ export default {
   }
   .row-add {
     margin-top: 10px;
+  }
+  .level3 {
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
+  .level1 {
+    margin-bottom: 10px;
   }
 </style>
