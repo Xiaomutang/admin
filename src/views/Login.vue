@@ -6,7 +6,7 @@
         <el-input v-model="formData.username"></el-input>
       </el-form-item>
       <el-form-item label="密码">
-        <el-input type="password" v-model="formData.password"></el-input>
+        <el-input @keyup.enter.native="handleLogin" type="password" v-model="formData.password"></el-input>
       </el-form-item>
       <el-button @click="handleLogin" class="btn" type="primary">登录</el-button>
     </el-form>
@@ -26,7 +26,7 @@ export default {
   methods: {
     async handleLogin() {
       const res = await this.$http.post('login', this.formData);
-      console.log(1);
+      // console.log(1);
       const data = res.data;
       const { meta: { status, msg } } = data;
       if (status === 200) {
