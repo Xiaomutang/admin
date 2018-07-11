@@ -1,12 +1,8 @@
 <template>
-    <el-card>
-      <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item>权限管理</el-breadcrumb-item>
-        <el-breadcrumb-item>权限列表</el-breadcrumb-item>
-      </el-breadcrumb>
-      
-    </el-card>
+  <el-card>
+    <my-breadcrumb level1="权限管理" level2="角色列表"></my-breadcrumb>
+
+  </el-card>
 </template>
 
 <script>

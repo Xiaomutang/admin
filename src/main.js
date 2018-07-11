@@ -8,6 +8,8 @@ import 'element-ui/lib/theme-chalk/index.css';
 import '@/assets/login.css';
 import MyAxios from '@/plugins/myaxios';
 import moment from 'moment';
+import MyBreadcrumb from '@/components/MyBreadcrumb';
+Vue.component(MyBreadcrumb.name, MyBreadcrumb);
 Vue.config.productionTip = false;
 Vue.use(MyAxios);
 Vue.use(ElementUI);
