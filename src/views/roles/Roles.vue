@@ -22,18 +22,19 @@
             v-for="item1 in scope.row.children"
             :key="item1.id">
             <el-col :span="4">
-              <el-tag>{{ item1.authName }}</el-tag>
+              <el-tag closable>{{ item1.authName }}</el-tag>
             </el-col>
             <el-col :span="20">
               <el-row
                 v-for="item2 in item1.children"
                 :key="item2.id">
                 <el-col :span="4">
-                  <el-tag>{{ item2.authName }}</el-tag>
+                  <el-tag closable>{{ item2.authName }}</el-tag>
                   <i class="el-icon-arrow-right"></i>
                 </el-col>
                 <el-col :span="20">
                   <el-tag
+                    closable
                     class="level3"
                     type="warning"
                     v-for="item3 in item2.children"
@@ -43,6 +44,9 @@
                 </el-col>
               </el-row>
             </el-col>
+          </el-row>
+          <el-row v-if="scope.row.children.length === 0">
+            <el-col :span="24">未分配权限</el-col>
           </el-row>
         </template>
       </el-table-column>
