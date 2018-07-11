@@ -7,6 +7,7 @@
       </el-col>
     </el-row>
     <el-table
+      v-loading="loading"
       stripe
       border
       :data="list"
@@ -60,7 +61,8 @@ export default {
       list: [],
       pagenum: 1,
       pagesize: 5,
-      total: 0
+      total: 0,
+      loading: true
     };
   },
   created() {
@@ -68,18 +70,26 @@ export default {
   },
   methods: {
     async loadData() {
-      const { data: resData } = await this.$http.get('categories?type=3');
+      this.loading = true;
+      const { data: resData } = await this.$http.get(`categories?type=3&pagenum=${this.pagenum}&pagesize=${this.pagesize}`);
+      this.loading = false;
+      console.log(resData);
       const { meta: { status, msg } } = resData;
       if (status === 200) {
-        this.list = resData.data;
+        this.list = resData.data.result;
+        this.total = resData.data.total;
       } else {
         this.$message.error(msg);
       }
     },
     handleSizeChange(val) {
+      this.pagesize = val;
+      this.loadData();
       console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
+      this.pagenum = val;
+      this.loadData();
       console.log(`当前页: ${val}`);
     }
   }
