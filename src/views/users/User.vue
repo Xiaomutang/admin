@@ -63,8 +63,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-sizes="[1, 2]"
-      :page-size="pagesize"
+      :page-sizes="pagesize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
@@ -137,7 +136,7 @@ export default {
     return {
       list: [],
       loading: true,
-      pagesize: 2,
+      pagesize: [3, 6, 9],
       currentPage: 1,
       total: 0,
       searchValue: '',
