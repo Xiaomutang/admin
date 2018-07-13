@@ -34,7 +34,6 @@
       <el-button @click="handleNextStep">下一步</el-button>
     </el-tab-pane>
     <el-tab-pane label="商品图片" name="1">
-      商品图片
       <el-row>
         <el-col :span="4">
           <el-button @click="handleNextStep">下一步</el-button>
@@ -42,13 +41,13 @@
       </el-row>
     </el-tab-pane>
     <el-tab-pane label="商品详情" name="2">
-      <!-- <quill-editor
-        v-model="form.goods_introduce"
-        ref="myQuillEditor"
-        @blur="onEditorBlur($event)"
-        @focus="onEditorFocus($event)"
-        @ready="onEditorReady($event)">
-      </quill-editor> -->
+      <quill-editor
+          v-model="form.goods_introduce"
+          ref="myQuillEditor"
+          @blur="onEditorBlur($event)"
+          @focus="onEditorFocus($event)"
+          @ready="onEditorReady($event)">
+        </quill-editor>
       <el-row>
         <el-col :span="4">
           <el-button type="primary" @click="handleAdd">立即创建</el-button>
@@ -61,10 +60,10 @@
 
 <script>
 import CateCascader from '@/components/CateCascader';
-// import 'quill/dist/quill.core.css';
-// import 'quill/dist/quill.snow.css';
-// import 'quill/dist/quill.bubble.css';
-// import { quillEditor } from 'vue-quill-editor';
+import 'quill/dist/quill.core.css';
+import 'quill/dist/quill.snow.css';
+import 'quill/dist/quill.bubble.css';
+import { quillEditor } from 'vue-quill-editor';
 export default {
   data() {
     return {
@@ -81,16 +80,43 @@ export default {
   },
   methods: {
     handleGaiBianLe() {
-
+      this.form.goods_cat = data.join(',');
     },
     handleNextStep() {
  
     },
-    handleAdd() {
+    async handleAdd() {
+      const res = await this.$http({
+        url: '/goods',
+        method: 'post',
+        data: this.form
+      });
+      const { data, meta } = res.data;
+      if (meta.status === 201) {
+        this.$message({
+          type: 'success',
+          message: meta.msg
+        })
+      } else if (meta.status === 400) {
+        this.$message({
+          type: 'warning',
+          message: meta.msg
+        })
+      }
+    },
+    onEditorBlur () {
+      console.log('onEditorBlur')
+    },
+    onEditorFocus () {
+      console.log('onEditorFocus')
+    },
+    onEditorReady () {
+      console.log('onEditorReady')
     }
   },
   components: {
-    CateCascader
+    CateCascader,
+    quillEditor
   }
 };
 </script>
