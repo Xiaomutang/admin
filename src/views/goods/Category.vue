@@ -46,7 +46,7 @@
       <el-table-column
         label="操作">
         <template slot-scope="scope">
-          <el-button plain size="mini" type="primary" icon="el-icon-edit" ></el-button>
+          <el-button plain size="mini" type="primary" icon="el-icon-edit" @click="handleShowEdit(scope.row)"></el-button>
           <el-button plain size="mini" type="danger" icon="el-icon-delete" ></el-button>
         </template>
       </el-table-column>
@@ -84,6 +84,17 @@
         <el-button type="primary" @click="handleAdd">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="编辑分类" :visible.sync="editFormDialog">
+      <el-form :model="editForm" ref="addForm">
+        <el-form-item label="分类名称" label-width="100px" prop="cat_name">
+          <el-input v-model="editForm.cat_name" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editFormDialog = false">取 消</el-button>
+        <el-button type="primary" @click="handleEdit">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -102,7 +113,11 @@ export default {
         cat_name: ''
       },
       options: [],
-      selectedOptions2: []
+      selectedOptions2: [],
+      editFormDialog: false,
+      editForm: {
+        cat_name: ''
+      }
     };
   },
   created() {
@@ -163,6 +178,13 @@ export default {
         this.$refs['addForm'].resetFields();
         this.selectedOptions2 = [];
       }
+    },
+    handleShowEdit(cat) {
+      this.editFormDialog = true;
+      this.editForm = cat;
+    },
+    handleEdit() {
+
     }
   },
   components: {
