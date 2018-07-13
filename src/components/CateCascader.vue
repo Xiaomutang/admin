@@ -8,7 +8,7 @@
       value: 'cat_id',
       children: 'children'
     }"
-    v-model="selectedOptions2" 
+    v-model="selectedOptions2"
     @change="handleChange">
   </el-cascader>
 </template>

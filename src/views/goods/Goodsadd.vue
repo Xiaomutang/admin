@@ -9,7 +9,7 @@
       <el-step title="商品图片"></el-step>
       <el-step title="商品内容"></el-step>
     </el-steps>
-    <el-tabs tab-position="left">
+    <el-tabs tab-position="left" v-model="activeName" @tab-click="handleTabClick">
     <el-tab-pane label="基本信息" name="0">
       <el-form ref="form" :model="form" label-width="80px" label-position="top">
         <el-form-item label="商品名称">
@@ -67,6 +67,7 @@ import { quillEditor } from 'vue-quill-editor';
 export default {
   data() {
     return {
+      activeName: '0',
       stepActive: 0,
       form: {
         goods_name: '',
@@ -79,11 +80,12 @@ export default {
     };
   },
   methods: {
-    handleGaiBianLe() {
+    handleGaiBianLe(data) {
       this.form.goods_cat = data.join(',');
     },
     handleNextStep() {
- 
+      this.activeName = Number.parseInt(this.activeName) + 1 + '';
+      this.stepActive++;
     },
     async handleAdd() {
       const res = await this.$http({
@@ -91,27 +93,32 @@ export default {
         method: 'post',
         data: this.form
       });
-      const { data, meta } = res.data;
+      const { meta } = res.data;
       if (meta.status === 201) {
         this.$message({
           type: 'success',
           message: meta.msg
-        })
+        });
       } else if (meta.status === 400) {
         this.$message({
           type: 'warning',
           message: meta.msg
-        })
+        });
       }
     },
     onEditorBlur () {
-      console.log('onEditorBlur')
+      console.log('onEditorBlur');
     },
     onEditorFocus () {
-      console.log('onEditorFocus')
+      console.log('onEditorFocus');
     },
     onEditorReady () {
-      console.log('onEditorReady')
+      console.log('onEditorReady');
+    },
+    handleTabClick() {
+      // console.log('handleTabClick')
+      // console.log(tab.index)
+      this.stepActive = tab.index - 0;
     }
   },
   components: {
