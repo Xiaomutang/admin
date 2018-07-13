@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     handleChange() {
-      this.$emit('gaibianle', this.selectedOptions);
+      this.$emit('gaibianle', this.selectedOptions2);
     }
   }
 };
