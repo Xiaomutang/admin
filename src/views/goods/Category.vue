@@ -183,8 +183,21 @@ export default {
       this.editFormDialog = true;
       this.editForm = cat;
     },
-    handleEdit() {
-
+    async handleEdit() {
+      const { cat_id, cat_name } = this.editForm;
+      const res = await this.$http({
+        url: `/categories/${cat_id}`,
+        data: {
+          cat_name
+        },
+        method: 'put'
+      });
+      const { meta: { status, msg } } = res.data;
+      if (status === 200) {
+        this.$message.success(msg);
+      } else {
+        this.$message.error(msg);
+      }
     }
   },
   components: {
