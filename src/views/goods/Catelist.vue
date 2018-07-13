@@ -1,9 +1,9 @@
 <template>
   <el-card class="box-card">
-    <my-breadcrumb level1="商品管理" level2="商品分类"></my-breadcrumb>
+    <my-breadcrumb level1="商品管理" level2="商品列表"></my-breadcrumb>
     <el-row class="row-add">
       <el-col :span="24">
-        <el-button @click="handleShowAdd" type="success" plain>添加分类</el-button>
+        <el-button @click="handleShowAdd" type="success" plain>添加商品</el-button>
       </el-col>
     </el-row>
     <el-table
@@ -12,41 +12,37 @@
       border
       :data="list"
       style="width: 100%">
-      <el-tree-grid
-        prop="cat_name"
-        label="分类名称"
-        treeKey="cat_id"
-        parentKey="cat_pid"
-        levelKey="cat_level"
-        childKey="children"
-        :indentSize="30">
-      </el-tree-grid>
-      <!-- <el-table-column
-        prop="cat_name"
-        label="分类名称"
-        width="180">
-      </el-table-column> -->
       <el-table-column
-        prop="name"
-        label="级别"
-        width="180">
-        <template slot-scope="scope">
-          <span v-if="scope.row.cat_level === 0">一级</span>
-          <span v-else-if="scope.row.cat_level === 1">二级</span>
-          <span v-else-if="scope.row.cat_level === 2">三级</span>
-        </template>
+        type="index"
+        width="50">
       </el-table-column>
       <el-table-column
-        prop="address"
-        label="是否有效">
+        prop="goods_name"
+        label="商品名称"
+        width="180">
+      </el-table-column>
+      <el-table-column
+        prop="goods_price"
+        label="商品价格"
+        width="180">
+      </el-table-column>
+      <el-table-column
+        prop="goods_weight"
+        label="商品重量"
+        width="180">
+      </el-table-column>
+      <el-table-column
+        prop="goods_weight"
+        label="创建时间"
+        width="180">
         <template slot-scope="scope">
-          {{ scope.row.cat_deleted ? '无效' : '有效' }}
+          {{ scope.row.add_time | format('YYYY-MM-DD') }}
         </template>
       </el-table-column>
       <el-table-column
         label="操作">
         <template slot-scope="scope">
-          <el-button plain size="mini" type="primary" icon="el-icon-edit" @click="handleShowEdit(scope.row)"></el-button>
+          <el-button plain size="mini" type="primary" icon="el-icon-edit"></el-button>
           <el-button plain size="mini" type="danger" icon="el-icon-delete" ></el-button>
         </template>
       </el-table-column>
@@ -60,41 +56,6 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
-    <el-dialog title="添加分类" :visible.sync="addFormDialog">
-      <el-form :model="addForm" ref="addForm">
-        <el-form-item label="分类名称" label-width="100px" prop="cat_name">
-          <el-input v-model="addForm.cat_name" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="父级分类" label-width="100px">
-          <el-cascader
-            expand-trigger="hover"
-            :options="options"
-            change-on-select
-            :props="{
-              label: 'cat_name',
-              value: 'cat_id',
-              children: 'children'
-            }"
-            v-model="selectedOptions2">
-          </el-cascader>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="addFormDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleAdd">确 定</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog title="编辑分类" :visible.sync="editFormDialog">
-      <el-form :model="editForm" ref="addForm">
-        <el-form-item label="分类名称" label-width="100px" prop="cat_name">
-          <el-input v-model="editForm.cat_name" auto-complete="off"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="editFormDialog = false">取 消</el-button>
-        <el-button type="primary" @click="handleEdit">确 定</el-button>
-      </div>
-    </el-dialog>
   </el-card>
 </template>
 
@@ -126,12 +87,12 @@ export default {
   methods: {
     async loadData() {
       this.loading = true;
-      const { data: resData } = await this.$http.get(`categories?type=3&pagenum=${this.pagenum}&pagesize=${this.pagesize}`);
+      const { data: resData } = await this.$http.get(`goods?type=3&pagenum=${this.pagenum}&pagesize=${this.pagesize}`);
       this.loading = false;
-      // console.log(resData);
+      console.log(resData);
       const { meta: { status, msg } } = resData;
       if (status === 200) {
-        this.list = resData.data.result;
+        this.list = resData.data.goods;
         this.total = resData.data.total;
       } else {
         this.$message.error(msg);
