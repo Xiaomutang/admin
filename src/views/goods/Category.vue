@@ -3,7 +3,7 @@
     <my-breadcrumb level1="商品管理" level2="商品分类"></my-breadcrumb>
     <el-row class="row-add">
       <el-col :span="24">
-        <el-button type="success" plain>添加分类</el-button>
+        <el-button @click="handleShowAdd" type="success" plain>添加分类</el-button>
       </el-col>
     </el-row>
     <el-table
@@ -60,6 +60,30 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
     </el-pagination>
+    <el-dialog title="添加分类" :visible.sync="addFormDialog">
+      <el-form :model="addForm" ref="addForm">
+        <el-form-item label="分类名称" label-width="100px" prop="cat_name">
+          <el-input v-model="addForm.cat_name" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="父级分类" label-width="100px">
+          <el-cascader
+            expand-trigger="hover"
+            :options="options"
+            change-on-select
+            :props="{
+              label: 'cat_name',
+              value: 'cat_id',
+              children: 'children'
+            }"
+            v-model="selectedOptions2">
+          </el-cascader>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addFormDialog = false">取 消</el-button>
+        <el-button type="primary" @click="handleAdd">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -72,7 +96,13 @@ export default {
       pagenum: 1,
       pagesize: 5,
       total: 0,
-      loading: true
+      loading: true,
+      addFormDialog: false,
+      addForm: {
+        cat_name: ''
+      },
+      options: [],
+      selectedOptions2: []
     };
   },
   created() {
@@ -83,7 +113,7 @@ export default {
       this.loading = true;
       const { data: resData } = await this.$http.get(`categories?type=3&pagenum=${this.pagenum}&pagesize=${this.pagesize}`);
       this.loading = false;
-      console.log(resData);
+      // console.log(resData);
       const { meta: { status, msg } } = resData;
       if (status === 200) {
         this.list = resData.data.result;
@@ -101,6 +131,38 @@ export default {
       this.pagenum = val;
       this.loadData();
       console.log(`当前页: ${val}`);
+    },
+    async handleShowAdd() {
+      this.addFormDialog = true;
+      const res = await this.$http({
+        url: 'categories',
+        params: {
+          type: 2
+        }
+      });
+      // console.log(res);
+      this.options = res.data.data;
+    },
+    async handleAdd() {
+      const formData = {
+        ...this.addForm,
+        cat_level: this.selectedOptions2.length,
+        cat_pid: this.selectedOptions2[this.selectedOptions2.length - 1]
+      };
+      const res = await this.$http({
+        url: 'categories',
+        method: 'post',
+        data: formData
+      });
+      console.log(res);
+      const { meta: { status, msg } } = res.data;
+      if (status === 201) {
+        this.addFormDialog = false;
+        this.$message.success(msg);
+        this.loadData();
+        this.$refs['addForm'].resetFields();
+        this.selectedOptions2 = [];
+      }
     }
   },
   components: {
