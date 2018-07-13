@@ -3,7 +3,7 @@
     <my-breadcrumb level1="商品管理" level2="商品列表"></my-breadcrumb>
     <el-row class="row-add">
       <el-col :span="24">
-        <el-button @click="handleShowAdd" type="success" plain>添加商品</el-button>
+        <el-button @click="$router.push({name: 'goodsadd'})" type="success" plain>添加商品</el-button>
       </el-col>
     </el-row>
     <el-table
@@ -68,17 +68,7 @@ export default {
       pagenum: 1,
       pagesize: 5,
       total: 0,
-      loading: true,
-      addFormDialog: false,
-      addForm: {
-        cat_name: ''
-      },
-      options: [],
-      selectedOptions2: [],
-      editFormDialog: false,
-      editForm: {
-        cat_name: ''
-      }
+      loading: true
     };
   },
   created() {
@@ -107,60 +97,6 @@ export default {
       this.pagenum = val;
       this.loadData();
       console.log(`当前页: ${val}`);
-    },
-    async handleShowAdd() {
-      this.addFormDialog = true;
-      const res = await this.$http({
-        url: 'categories',
-        params: {
-          type: 2
-        }
-      });
-      // console.log(res);
-      this.options = res.data.data;
-    },
-    async handleAdd() {
-      const formData = {
-        ...this.addForm,
-        cat_level: this.selectedOptions2.length,
-        cat_pid: this.selectedOptions2[this.selectedOptions2.length - 1]
-      };
-      const res = await this.$http({
-        url: 'categories',
-        method: 'post',
-        data: formData
-      });
-      console.log(res);
-      const { meta: { status, msg } } = res.data;
-      if (status === 201) {
-        this.addFormDialog = false;
-        this.$message.success(msg);
-        this.loadData();
-        this.$refs['addForm'].resetFields();
-        this.selectedOptions2 = [];
-      }
-    },
-    handleShowEdit(cat) {
-      this.editFormDialog = true;
-      this.editForm = cat;
-    },
-    async handleEdit() {
-      const { cat_id, cat_name } = this.editForm;
-      const res = await this.$http({
-        url: `/categories/${cat_id}`,
-        data: {
-          cat_name
-        },
-        method: 'put'
-      });
-      const { meta: { status, msg } } = res.data;
-      if (status === 200) {
-        this.editFormDialog = false;
-        this.$message.success(msg);
-        this.loadData();
-      } else {
-        this.$message.error(msg);
-      }
     }
   },
   components: {
