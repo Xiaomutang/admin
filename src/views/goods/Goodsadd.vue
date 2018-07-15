@@ -36,9 +36,11 @@
     <el-tab-pane label="商品图片" name="1">
       <el-upload
         class="upload-demo"
-        action="https://jsonplaceholder.typicode.com/posts/"
+        :headers="headers"
+        action="http://localhost:8888/api/private/v1/upload"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
+        :on-success="handleUploadSuccess"
         :file-list="fileList2"
         list-type="picture">
         <el-button size="small" type="primary">点击上传</el-button>
@@ -85,11 +87,13 @@ export default {
         goods_weight: '',
         goods_number: '',
         goods_cat: '',
-        goods_introduce: ''
+        goods_introduce: '',
+        pics: []
       },
-      fileList2: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-        {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}
-      ]
+      fileList2: [],
+      headers: {
+        Authorization: window.sessionStorage.getItem('token')
+      }
     };
   },
   methods: {
@@ -107,6 +111,7 @@ export default {
         data: this.form
       });
       const { meta } = res.data;
+      // console.log(res.data.data.pics);
       if (meta.status === 201) {
         this.$message({
           type: 'success',
@@ -138,6 +143,11 @@ export default {
     },
     handlePreview(file) {
       console.log(file);
+    },
+    handleUploadSuccess(response, file, fileList) {
+      this.form.pics.push({
+        pic: response.data.tmp_path
+      });
     }
   },
   components: {
