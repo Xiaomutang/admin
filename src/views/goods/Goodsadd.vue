@@ -140,6 +140,12 @@ export default {
     },
     handleRemove(file, fileList) {
       console.log(file, fileList);
+      const index = this.form.pics.findIndex(function (item) {
+        return item.pic === file.response.data.tmp_path;
+      });
+      if (index != -1) {
+        this.form.pics.splice(index, 1);
+      }
     },
     handlePreview(file) {
       console.log(file);
