@@ -9,6 +9,7 @@ import Category from '@/views/goods/Category';
 import Catelist from '@/views/goods/Catelist';
 import Goodsadd from '@/views/goods/Goodsadd';
 import Orderslist from '@/views/orders/List';
+import Reports from '@/views/reports/Index';
 import { Message } from 'element-ui';
 Vue.use(Router);
 
@@ -30,7 +31,8 @@ const router = new Router({
         { name: 'category', path: '/categories', component: Category },
         { name: 'catelist', path: '/goods', component: Catelist },
         { name: 'goodsadd', path: '/goods/add', component: Goodsadd },
-        { name: 'orderslist', path: '/orders', component: Orderslist }
+        { name: 'orderslist', path: '/orders', component: Orderslist },
+        { name: 'report', path: '/reports', component: Reports }
       ]
     }
   ]
