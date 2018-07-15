@@ -143,7 +143,7 @@ export default {
       const index = this.form.pics.findIndex(function (item) {
         return item.pic === file.response.data.tmp_path;
       });
-      if (index != -1) {
+      if (index !== -1) {
         this.form.pics.splice(index, 1);
       }
     },

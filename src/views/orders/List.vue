@@ -2,6 +2,19 @@
   <el-card class="box-card">
     <!-- 面包屑 -->
     <my-breadcrumb level1="订单管理" level2="订单列表"></my-breadcrumb>
+    <el-button class="btn" @click="handleMapMove">点击移动地图</el-button>
+    <!-- 地图容器，要有宽高 -->
+    <div id="bmap_container"></div>
+    <el-row>
+      <el-col :span="8">
+        <el-cascader
+          size="large"
+          :options="options"
+          v-model="selectedOptions"
+          @change="handleChange">
+        </el-cascader>
+      </el-col>
+    </el-row>
     <!-- 表格 -->
     <el-table
       class="tb"
@@ -63,16 +76,27 @@
 </template>
 
 <script>
+import { regionData } from 'element-china-area-data';
+const { BMap } = window;
 export default {
   data() {
     return {
+      list: [],
       pagesize: [3, 6, 9],
       currentPage: 1,
-      total: 0
+      total: 0,
+      options: regionData,
+      selectedOptions: [],
+      map: null
     };
   },
   created() {
     this.loadData();
+  },
+  mounted () {
+    this.map = new BMap.Map('bmap_container');
+    const point = new BMap.Point(116.404, 39.915);
+    this.map.centerAndZoom(point, 15);
   },
   methods: {
     async loadData() {
@@ -81,17 +105,48 @@ export default {
       const data = res.data;
       const { meta: { status, msg } } = data;
       if (status === 200) {
-        const { data: { users } } = data;
         this.list = res.data.data.goods;
         this.total = res.data.data.total;
       } else {
         this.$message.error(msg);
       }
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.loadData();
+    },
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.currentPage = 1;
+      this.loadData();
+    },
+    handleChange () {
+      console.log('change');
+    },
+    handleMapMove () {
+      const { map } = this;
+      var point = new BMap.Point(116.404, 39.915);
+      map.centerAndZoom(point, 15);
+      var marker = new BMap.Marker(point); // 创建标注
+      map.addOverlay(marker);
     }
   }
-}
+};
 </script>
 
 <style>
-
+.box-card {
+  height: 100%;
+  overflow: auto;
+}
+.tb {
+  margin-top: 10px;
+}
+#bmap_container {
+  width: 500px;
+  height: 300px;
+}
+.btn {
+  margin: 10px 0;
+}
 </style>
